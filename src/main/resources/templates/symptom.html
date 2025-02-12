@@ -10,6 +10,10 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{'/category/' + ${symptom?.category}}" 
+                       th:text="${symptom?.category?.name}">カテゴリー</a>
+                </li>
                 <li class="breadcrumb-item active" aria-current="page" th:text="${symptom?.name}">症状名</li>
             </ol>
         </nav>
@@ -17,11 +21,44 @@
         <div th:if="${symptom}" class="card mt-4">
             <div class="card-body">
                 <h1 class="card-title" th:text="${symptom.name}">症状名</h1>
+                
+                <div class="mb-3">
+                    <span class="badge bg-primary" th:text="${symptom.category.name}">カテゴリー</span>
+                    <span th:each="bodyPart : ${symptom.relatedBodyParts}" 
+                          class="badge bg-info ms-1" 
+                          th:text="${bodyPart.name}">部位</span>
+                </div>
+
                 <p class="card-text" th:text="${symptom.description}">症状の説明</p>
+
                 <div class="alert alert-info">
                     <h5>推奨される診療科</h5>
                     <p class="mb-0" th:text="${symptom.recommendedDepartment}">診療科名</p>
                 </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">重症度</h5>
+                                <span class="badge" 
+                                      th:classappend="${symptom.severity == '重度'} ? 'bg-danger' : (${symptom.severity == '中度'} ? 'bg-warning' : 'bg-success')"
+                                      th:text="${symptom.severity}">重症度</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">緊急度</h5>
+                                <span class="badge" 
+                                      th:classappend="${symptom.urgency == '高'} ? 'bg-danger' : (${symptom.urgency == '中'} ? 'bg-warning' : 'bg-success')"
+                                      th:text="${symptom.urgency}">緊急度</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mt-4">
                     <h5>注意事項</h5>
                     <ul>
@@ -30,7 +67,12 @@
                         <li>複数の症状がある場合は、主な症状に応じて診療科を選択してください。</li>
                     </ul>
                 </div>
-                <a th:href="@{/}" class="btn btn-primary mt-3">戻る</a>
+
+                <div class="mt-4">
+                    <a th:href="@{/}" class="btn btn-primary">戻る</a>
+                    <a th:href="@{'/category/' + ${symptom.category}}" 
+                       class="btn btn-outline-primary ms-2">同じカテゴリーの症状を見る</a>
+                </div>
             </div>
         </div>
 

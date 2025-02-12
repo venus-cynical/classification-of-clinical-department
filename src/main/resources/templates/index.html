@@ -12,28 +12,91 @@
         .symptom-card:hover {
             transform: translateY(-5px);
         }
+        .filter-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .category-badge, .body-part-badge {
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .category-badge:hover, .body-part-badge:hover {
+            background-color: #0056b3;
+        }
+        .selected {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <div class="container py-5">
         <h1 class="text-center mb-5">症状から診療科を探す</h1>
         
+        <!-- フィルターセクション -->
+        <div class="filter-section">
+            <div class="mb-4">
+                <h5>症状カテゴリー</h5>
+                <div>
+                    <a th:href="@{/}" class="badge bg-primary category-badge"
+                       th:classappend="${selectedCategory == null} ? 'selected' : ''">すべて</a>
+                    <a th:each="category : ${categories}"
+                       th:href="@{'/category/' + ${category}}"
+                       class="badge bg-primary category-badge"
+                       th:classappend="${category == selectedCategory} ? 'selected' : ''"
+                       th:text="${category.name}">カテゴリー名</a>
+                </div>
+            </div>
+            
+            <div>
+                <h5>体の部位</h5>
+                <div>
+                    <a th:href="@{/}" class="badge bg-info body-part-badge"
+                       th:classappend="${selectedBodyPart == null} ? 'selected' : ''">すべて</a>
+                    <a th:each="bodyPart : ${bodyParts}"
+                       th:href="@{'/bodypart/' + ${bodyPart}}"
+                       class="badge bg-info body-part-badge"
+                       th:classappend="${bodyPart == selectedBodyPart} ? 'selected' : ''"
+                       th:text="${bodyPart.name}">部位名</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 症状カードセクション -->
         <div class="row g-4">
             <div th:if="${symptoms}" th:each="symptom : ${symptoms}" class="col-md-4">
                 <div class="card symptom-card h-100" th:onclick="|window.location.href='@{/symptom/${symptom.id}}'|">
                     <div class="card-body">
                         <h5 class="card-title" th:text="${symptom.name}">症状名</h5>
                         <p class="card-text" th:text="${symptom.description}">症状の説明</p>
-                        <p class="card-text">
+                        <div class="card-text">
+                            <span class="badge bg-primary" th:text="${symptom.category.name}">カテゴリー</span>
+                            <span th:each="bodyPart : ${symptom.relatedBodyParts}" 
+                                  class="badge bg-info ms-1" 
+                                  th:text="${bodyPart.name}">部位</span>
+                        </div>
+                        <p class="card-text mt-2">
                             <small class="text-muted">推奨診療科：</small>
                             <span th:text="${symptom.recommendedDepartment}">診療科名</span>
                         </p>
+                        <div class="mt-2">
+                            <small class="text-muted">重症度：</small>
+                            <span class="badge" 
+                                  th:classappend="${symptom.severity == '重度'} ? 'bg-danger' : (${symptom.severity == '中度'} ? 'bg-warning' : 'bg-success')"
+                                  th:text="${symptom.severity}">重症度</span>
+                            <small class="text-muted ms-2">緊急度：</small>
+                            <span class="badge" 
+                                  th:classappend="${symptom.urgency == '高'} ? 'bg-danger' : (${symptom.urgency == '中'} ? 'bg-warning' : 'bg-success')"
+                                  th:text="${symptom.urgency}">緊急度</span>
+                        </div>
                     </div>
                 </div>
             </div>
             <div th:if="${#lists.isEmpty(symptoms)}" class="col-12">
                 <div class="alert alert-info">
-                    症状データが登録されていません。
+                    該当する症状が見つかりません。
                 </div>
             </div>
         </div>
