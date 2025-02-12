@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>症状詳細 - 診療科検索システム</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${symptom?.name}">症状名</li>
+            </ol>
+        </nav>
+
+        <div th:if="${symptom}" class="card mt-4">
+            <div class="card-body">
+                <h1 class="card-title" th:text="${symptom.name}">症状名</h1>
+                <p class="card-text" th:text="${symptom.description}">症状の説明</p>
+                <div class="alert alert-info">
+                    <h5>推奨される診療科</h5>
+                    <p class="mb-0" th:text="${symptom.recommendedDepartment}">診療科名</p>
+                </div>
+                <div class="mt-4">
+                    <h5>注意事項</h5>
+                    <ul>
+                        <li>症状が重い場合や急を要する場合は、すぐに救急外来を受診してください。</li>
+                        <li>この情報はあくまでも参考情報です。実際の診療科の選択は、医療機関での診断に基づいて行ってください。</li>
+                        <li>複数の症状がある場合は、主な症状に応じて診療科を選択してください。</li>
+                    </ul>
+                </div>
+                <a th:href="@{/}" class="btn btn-primary mt-3">戻る</a>
+            </div>
+        </div>
+
+        <div th:if="${symptom == null}" class="alert alert-danger mt-4">
+            指定された症状が見つかりませんでした。
+            <a th:href="@{/}" class="btn btn-primary mt-3">ホームに戻る</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
